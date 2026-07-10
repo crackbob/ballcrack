@@ -47,7 +47,7 @@ export default class Killaura extends Module {
                 attacked = true;
 
                 if (autoBlock) this.unblock();
-                hooks.game.controller.objectMouseOver.hitVec = hooks.game.player.getEyePos().clone().clamp(box.min, box.max);
+                hooks.game.controller.objectMouseOver.hitVec = hooks.game.player.pos.clone().clamp(box.min, box.max);
                 hooks.game.controller.attackEntity(ent);
                 if (autoBlock) this.block();
 

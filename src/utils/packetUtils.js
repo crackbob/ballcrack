@@ -8,15 +8,14 @@ let packetUtils = {
         this.$Message2 = SPacketUpdateInventory.constructor.__proto__;
         this.proto2 = SPacketUpdateInventory.constructor.runtime;
 
-        this._toJson = this.$Message2.prototype.toJson;
+        this._toBinary = this.$Message2.prototype.toBinary;
         let context = this;
-        this.$Message2.prototype.toJson = function () {
-            let retVal = context._toJson.apply(this, arguments);
-            let packetName = this.getType().typeName;
+        this.$Message2.prototype.toBinary = function () {
+            let retVal = context._toBinary.apply(this, arguments);
 
             events.emit("packet", {
-                name: packetName,
-                data: retVal
+                name: this.getType().typeName,
+                data: this.toJSON()
             });
 
             return retVal;
