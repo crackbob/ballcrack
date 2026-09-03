@@ -2,7 +2,7 @@ import hooks from "./hooks";
 import moduleManager from "./Module/moduleManager";
 import shadowWrapper from "./shadowWrapper";
 
-import clickGUICSS from "./module/modules/visual/styles/clickgui.css";
+import clickGUICSS from "./Module/modules/visual/styles/clickgui.css";
 import events from "./events";
 import interactionUtils from "./utils/interactionUtils";
 import blockUtils from "./utils/blockUtils";
