@@ -1,23 +1,39 @@
-import Module from "../../Module.js";
-import moduleManager from "../../moduleManager.js";
-import events from "../../../events";
-import Panel from "./components/Panel.js";
-import colorUtils from "../../../utils/colorUtils.js";
-import shadowWrapper from "../../../shadowWrapper.js";
+import Module from '../../Module.js';
+import moduleManager from '../../moduleManager.js';
+import events from '../../../events.js';
+import Panel from './components/Panel.js';
+import colorUtils from '../../../utils/colorUtils.js';
+import shadowWrapper from '../../../shadowWrapper.js';
 
 export default class ClickGUI extends Module {
     constructor() {
-        super("ClickGUI", "Visual", {
-            "Accent Color 1": "#40beffff",
-            "Accent Color 2": "#81e1ffff",
-            "Button Color": "rgb(40, 40, 40, 0.9)",
-            "Hover Color": "rgb(50, 50, 50, 0.9)",
-            "Header Color": "rgb(0, 0, 0, 0.85)",
-            "Panel Color": "rgb(18 18 18)",
-            "Text Color": "#ffffff",
-            "Glow Alpha": "0.8",
-            "Enable Animations": true
-        }, "ShiftRight");
+        super(ClickGUI, 'Visual', {
+            // Цветовая палитра Neverlose
+            'Accent Color 1': '#00bfff',
+            'Accent Color 2': '#0055ff',
+            'Background Color': 'rgba(8, 10, 16, 0.95)',
+            'Panel Color': 'rgba(13, 17, 23, 0.90)',
+            'Header Color': 'rgba(18, 24, 33, 0.95)',
+            'Button Color': 'rgba(23, 30, 42, 0.8)',
+            'Hover Color': 'rgba(32, 42, 59, 0.9)',
+            'Text Color': '#e6f2ff',
+            'Text Muted': '#5a687d',
+            'Border Color': 'rgba(0, 191, 255, 0.2)',
+            
+            // Настройки кастомизации эффектов
+            'Glow Alpha': 0.6,
+            'Glow Blur Radius': '12px',
+            'Border Radius': '8px',
+            'Blur Strength': '10px',
+            'Header Height': '40px',
+            'Scale Factor': 1.0,
+            
+            // Переключатели
+            'Enable Animations': true,
+            'Enable Glow': true,
+            'Enable Blur Background': true,
+            'Custom Font': 'Inter'
+        }, 'ShiftRight');
 
         this.GUILoaded = false;
         this.panels = [];
@@ -26,59 +42,86 @@ export default class ClickGUI extends Module {
     }
 
     updateAnimations() {
-        if (this.options["Enable Animations"]) {
-            shadowWrapper.wrapper.classList.add("with-animations");
+        const wrapper = shadowWrapper.wrapper;
+        if (this.options['Enable Animations']) {
+            wrapper.classList.add('nl-animations');
         } else {
-            shadowWrapper.wrapper.classList.remove("with-animations");
+            wrapper.classList.remove('nl-animations');
         }
     }
 
     updateColors() {
-        const accentGradient = `linear-gradient(90deg, ${this.options["Accent Color 1"]} 0%, ${this.options["Accent Color 2"]} 100%)`;
+        const wrapper = shadowWrapper.wrapper;
+        const opts = this.options;
+
+        // Генерация градиентов в стиле Neverlose
+        const accentGradient = `linear-gradient(135deg, ${opts['Accent Color 1']} 0%, ${opts['Accent Color 2']} 100%)`;
+        const borderGradient = `linear-gradient(135deg, ${opts['Border Color']} 0%, rgba(0, 0, 0, 0) 100%)`;
+        const glowRGBA = colorUtils.hexToRGBA(opts['Accent Color 1'], parseFloat(opts['Glow Alpha']), 1.2);
+
+        // Установка CSS переменных
+        wrapper.style.setProperty('--nl-accent-gradient', accentGradient);
+        wrapper.style.setProperty('--nl-accent-1', opts['Accent Color 1']);
+        wrapper.style.setProperty('--nl-accent-2', opts['Accent Color 2']);
+        wrapper.style.setProperty('--nl-bg-color', opts['Background Color']);
+        wrapper.style.setProperty('--nl-panel-bg', opts['Panel Color']);
+        wrapper.style.setProperty('--nl-header-bg', opts['Header Color']);
+        wrapper.style.setProperty('--nl-button-bg', opts['Button Color']);
+        wrapper.style.setProperty('--nl-hover-bg', opts['Hover Color']);
+        wrapper.style.setProperty('--nl-text-color', opts['Text Color']);
+        wrapper.style.setProperty('--nl-text-muted', opts['Text Muted']);
+        wrapper.style.setProperty('--nl-border-color', opts['Border Color']);
+        wrapper.style.setProperty('--nl-glow-color', glowRGBA);
         
-        shadowWrapper.wrapper.style.setProperty('--Ballcrack-accent-color', accentGradient);
-        shadowWrapper.wrapper.style.setProperty('--Ballcrack-accent-color', accentGradient);
-        shadowWrapper.wrapper.style.setProperty('--Ballcrack-accent-color-1', this.options["Accent Color 1"]);
-        shadowWrapper.wrapper.style.setProperty('--Ballcrack-accent-color-2', this.options["Accent Color 2"]);
-        shadowWrapper.wrapper.style.setProperty('--Ballcrack-button-color', this.options["Button Color"]);
-        shadowWrapper.wrapper.style.setProperty('--button-color', this.options["Button Color"]);
-        shadowWrapper.wrapper.style.setProperty('--hover-color', this.options["Hover Color"]);
-        shadowWrapper.wrapper.style.setProperty('--header-bg', this.options["Header Color"]);
-        shadowWrapper.wrapper.style.setProperty('--panel-bg', this.options["Panel Color"]);
-        shadowWrapper.wrapper.style.setProperty('--text-color', this.options["Text Color"]);
-        shadowWrapper.wrapper.style.setProperty('--glow-color', colorUtils.hexToRGBA(this.options["Accent Color 1"], parseFloat(this.options["Glow Alpha"]), 1.2));
+        // Переменные геометрии и эффектов
+        wrapper.style.setProperty('--nl-glow-blur', opts['Glow Blur Radius']);
+        wrapper.style.setProperty('--nl-border-radius', opts['Border Radius']);
+        wrapper.style.setProperty('--nl-blur-strength', opts['Blur Strength']);
+        wrapper.style.setProperty('--nl-header-height', opts['Header Height']);
+        wrapper.style.setProperty('--nl-scale', opts['Scale Factor']);
+        wrapper.style.setProperty('--nl-font-family', `'${opts['Custom Font']}', 'Segoe UI', sans-serif`);
+
+        // Состояние размытия заднего фона
+        if (this.blurredBackground) {
+            this.blurredBackground.style.backdropFilter = opts['Enable Blur Background'] 
+                ? `blur(${opts['Blur Strength']})` 
+                : 'none';
+        }
     }
 
     onEnable() {
-        document.pointerLockElement && document.exitPointerLock();
+        if (document.pointerLockElement) {
+            document.exitPointerLock();
+        }
 
         if (!this.GUILoaded) {
             this.setupBackground();
             this.createPanels();
             this.setupEventListeners();
             this.GUILoaded = true;
-            this.updateAnimations();
-        } else {
-            this.showGUI();
-            this.updateAnimations();
         }
+
+        this.showGUI();
+        this.updateColors();
+        this.updateAnimations();
     }
 
     setupBackground() {
-        this.blurredBackground = document.createElement("div");
-        this.blurredBackground.className = "gui-background";
+        this.blurredBackground = document.createElement('div');
+        this.blurredBackground.className = 'nl-gui-background';
         shadowWrapper.wrapper.appendChild(this.blurredBackground);
     }
 
     createPanels() {
         const panelConfigs = [
-            { title: "Combat", position: { top: "100px", left: "100px" } },
-            { title: "Movement", position: { top: "100px", left: "338px" } },
-            { title: "Visual", position: { top: "100px", left: "576px" } },
-            { title: "World", position: { top: "100px", left: "814px" } },
-            { title: "Misc", position: { top: "100px", left: "1052px" } },
+            { title: 'Combat', position: { top: '80px', left: '80px' } },
+            { title: 'Movement', position: { top: '80px', left: '320px' } },
+            { title: 'Visual', position: { top: '80px', left: '560px' } },
+            { title: 'World', position: { top: '80px', left: '800px' } },
+            { title: 'Misc', position: { top: '80px', left: '1040px' } },
         ];
 
+        // Очистка старых панелей
         this.panels.forEach(panel => {
             if (panel.panel && panel.panel.parentNode) {
                 panel.panel.parentNode.removeChild(panel.panel);
@@ -86,11 +129,13 @@ export default class ClickGUI extends Module {
         });
         this.panels = [];
 
+        // Инициализация новых панелей
         panelConfigs.forEach(config => {
             const panel = new Panel(config.title, config.position);
             this.panels.push(panel);
         });
 
+        // Группировка модулей по категориям
         const modulesByCategory = {};
         Object.values(moduleManager.modules).forEach(module => {
             if (!modulesByCategory[module.category]) {
@@ -99,16 +144,18 @@ export default class ClickGUI extends Module {
             modulesByCategory[module.category].push(module);
         });
 
+        // Сортировка и добавление элементов на панели
         Object.entries(modulesByCategory).forEach(([category, modules]) => {
-            const panel = this.panels.find(p => p.header.textContent === category);
+            const panel = this.panels.find(p => p.header && p.header.textContent === category);
             if (!panel) return;
 
-            const measure = document.createElement("span");
-            measure.style.visibility = "hidden";
-            measure.style.position = "absolute";
-            measure.style.font = "'Product Sans', sans-serif";
+            const measure = document.createElement('span');
+            measure.style.visibility = 'hidden';
+            measure.style.position = absolute;
+            measure.style.font = `14px '${this.options['Custom Font']}', sans-serif`;
             shadowWrapper.wrapper.appendChild(measure);
 
+            // Сортировка модулей по ширине названия
             modules.sort((a, b) => {
                 measure.textContent = a.name;
                 const widthA = measure.getBoundingClientRect().width;
@@ -123,27 +170,33 @@ export default class ClickGUI extends Module {
     }
 
     setupEventListeners() {
-        events.on("module.update", (module) => {
-            const panel = this.panels.find(p => p.header.textContent === module.category);
+        events.on('module.update', (module) => {
+            const panel = this.panels.find(p => p.header && p.header.textContent === module.category);
             if (!panel) return;
             
             const button = panel.buttons.find(btn => btn.textContent === module.name);
-            if (button) button.classList.toggle("enabled", module.isEnabled);
+            if (button) {
+                button.classList.toggle('enabled', module.isEnabled);
+            }
         });
     }
 
     showGUI() {
         this.panels.forEach(panel => panel.show());
-        this.blurredBackground.style.display = "block";
+        if (this.blurredBackground) {
+            this.blurredBackground.style.display = 'block';
+        }
     }
 
     returnToGame() {
-        
+        // Логика возврата фокуса в игру при закрытии меню
     }
 
     onDisable() {
         this.panels.forEach(panel => panel.hide());
-        this.blurredBackground.style.display = "none";
+        if (this.blurredBackground) {
+            this.blurredBackground.style.display = 'none';
+        }
         this.returnToGame();
     }
 
