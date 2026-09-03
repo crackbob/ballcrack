@@ -24,12 +24,8 @@ jobs:
     - name: Build project
       run: npm run build
     
-    - name: Commit and push changes
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add dist/
-        git commit -m "Auto-build: update dist files" || echo "No changes to commit"
-        git push
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload dist artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist-files
+        path: dist/
