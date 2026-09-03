@@ -1,0 +1,122 @@
+/* Neverlose GUI Styles */
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00d4ff40;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #00d4ff60;
+}
+
+.neverlose-window {
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.neverlose-window input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    cursor: pointer;
+    background: transparent;
+    position: relative;
+}
+
+.neverlose-window input[type="checkbox"]:checked {
+    background: currentColor;
+}
+
+.neverlose-window input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    left: 2px;
+    top: -1px;
+    color: #1a1a1a;
+    font-weight: bold;
+    font-size: 10px;
+}
+
+.neverlose-window input[type="range"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: transparent;
+    outline: none;
+    padding: 0;
+}
+
+.neverlose-window input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    background: currentColor;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    box-shadow: 0 0 8px currentColor;
+}
+
+.neverlose-window input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: currentColor;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    box-shadow: 0 0 8px currentColor;
+}
+
+.neverlose-window input[type="range"]::-webkit-slider-runnable-track {
+    height: 4px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+}
+
+.neverlose-window input[type="range"]::-moz-range-track {
+    height: 4px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+}
+
+.neverlose-window select {
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+.neverlose-window button:active {
+    transform: scale(0.98);
+}
+
+/* Custom scrollbar for window content */
+.neverlose-window-content::-webkit-scrollbar {
+    width: 5px;
+}
+
+.neverlose-window-content::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+}
